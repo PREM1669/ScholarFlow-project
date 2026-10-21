@@ -29,3 +29,15 @@ database; change or remove them before deploying.
 Protected portal routes are under `/student`, `/instructor`, and `/admin`.
 Server layouts and API handlers also check the current database role and
 account status.
+
+## Instructor courses
+
+Instructors can manage courses at `/instructor/courses`; admins can manage all
+courses from the same page. Add sections before publishing. The local seed also
+creates a published sample course with four sections.
+
+Course thumbnail uploads require valid `CLOUDINARY_CLOUD_NAME`,
+`CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` values in `.env`. Images are
+limited to JPG, PNG, or WebP files up to 2 MB. Course editing works without
+Cloudinary, but thumbnail uploads return a configuration error until those
+credentials are set.

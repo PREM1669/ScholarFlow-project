@@ -13,7 +13,13 @@ export const ROLE_HOME: Record<Role, string> = {
 };
 
 export const NAV_LINKS: Record<Role, { href: string; label: string }[]> = {
-  ADMIN: [{ href: "/admin/dashboard", label: "Dashboard" }],
-  INSTRUCTOR: [{ href: "/instructor/dashboard", label: "Dashboard" }],
+  ADMIN: [
+    { href: "/admin/dashboard", label: "Dashboard" },
+    { href: "/instructor/courses", label: "Courses" },
+  ],
+  INSTRUCTOR: [
+    { href: "/instructor/dashboard", label: "Dashboard" },
+    { href: "/instructor/courses", label: "My courses" },
+  ],
   STUDENT: [{ href: "/student/dashboard", label: "Dashboard" }],
 };

@@ -23,6 +23,37 @@ async function main() {
     });
   }
 
+  const instructor = await prisma.user.findUniqueOrThrow({
+    where: { email: "instructor@scholarflow.dev" },
+  });
+  const existingCourse = await prisma.course.findFirst({
+    where: {
+      instructorId: instructor.id,
+      title: "Foundations of Web Development",
+    },
+  });
+
+  if (!existingCourse) {
+    await prisma.course.create({
+      data: {
+        title: "Foundations of Web Development",
+        description:
+          "Build a strong foundation in the web platform, from semantic HTML and modern CSS to JavaScript and accessible interfaces.",
+        price: 0,
+        published: true,
+        instructorId: instructor.id,
+        sections: {
+          create: [
+            { title: "How the web works", order: 1 },
+            { title: "Semantic HTML", order: 2 },
+            { title: "Modern CSS essentials", order: 3 },
+            { title: "JavaScript in the browser", order: 4 },
+          ],
+        },
+      },
+    });
+  }
+
   console.log("Seeded the ScholarFlow demo accounts.");
 }
 
