@@ -25,5 +25,6 @@ export const NAV_LINKS: Record<Role, { href: string; label: string }[]> = {
     { href: "/student/dashboard", label: "Dashboard" },
     { href: "/student/courses", label: "Browse courses" },
     { href: "/student/my-learning", label: "My learning" },
+    { href: "/student/assignments", label: "Assignments" },
   ],
 };

@@ -142,6 +142,63 @@ export type EnrollmentItem = ProgressSummary & {
   };
 };
 
+export type SubmissionStatus = "not_submitted" | "submitted" | "graded";
+
+export type AssignmentListItem = {
+  id: string;
+  courseId: string;
+  courseTitle?: string;
+  title: string;
+  prompt?: string;
+  dueDate: string;
+  maxScore: number;
+  createdAt: string;
+  submittedCount?: number;
+  gradedCount?: number;
+  status?: SubmissionStatus;
+  submittedAt?: string | null;
+  isLate?: boolean;
+  score?: number | null;
+};
+
+export type AssignmentDetail = {
+  id: string;
+  courseId: string;
+  courseTitle?: string;
+  title: string;
+  prompt: string;
+  dueDate: string;
+  maxScore: number;
+  createdAt?: string;
+  submittedCount?: number;
+  gradedCount?: number;
+};
+
+export type SubmissionRow = {
+  id: string;
+  studentId?: string;
+  studentName?: string;
+  studentEmail?: string;
+  textAnswer: string | null;
+  fileUrl: string | null;
+  fileName: string | null;
+  isLate: boolean;
+  submittedAt: string;
+  score: number | null;
+  feedback: string | null;
+  gradedAt: string | null;
+};
+
+export type StudentSubmission = SubmissionRow;
+export type StudentAssignmentItem = AssignmentListItem;
+export type StudentAssignmentDetail = AssignmentDetail & {
+  submission: StudentSubmission | null;
+};
+export type SubmissionsPayload = {
+  enrolledCount: number;
+  submissions: SubmissionRow[];
+};
+
 export type BadgeKey =
   | "first-steps"
   | "getting-started"

@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { CourseForm } from "@/components/courses/course-form";
 import { SectionBuilder } from "@/components/courses/section-builder";
+import { AssignmentManager } from "@/components/instructor/assignment-manager";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { useCourse, useUpdateCourse } from "@/hooks/use-courses";
@@ -66,6 +67,7 @@ export default function EditCoursePage() {
           }
         />
         <SectionBuilder courseId={courseId} />
+        <AssignmentManager courseId={courseId} />
       </div>
     </>
   );

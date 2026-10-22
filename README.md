@@ -79,6 +79,44 @@ PDF certificate. Unenrolling permanently clears course progress and quiz
 attempts. The `/student/my-learning` page lists enrollment progress and
 achievements.
 
+### Assignments
+
+Instructors can create and edit assignments in the course editor, review
+submissions, and grade or regrade work with written feedback. Students can
+submit a text response, a PDF, DOCX, TXT, PNG, or JPG attachment (up to 4 MB),
+and update their work until it is graded. Late submissions are marked
+automatically. Submission records and uploaded work are retained if a student
+unenrolls; deleting an assignment or course removes its submission records and
+attempts to delete associated Cloudinary raw assets.
+
+Set valid Cloudinary credentials to enable attachments. Cloudinary must allow
+PDF/raw asset delivery for learners and instructors to open uploaded files.
+File URLs are only returned by authenticated APIs to the submitting student or
+the course instructor/admin; the exact Cloudinary URL itself is public.
+
+Instructor assignment endpoints require an active instructor/admin and enforce
+course ownership:
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET`, `POST` | `/api/v1/courses/:id/assignments` | List or create assignments |
+| `GET`, `PATCH`, `DELETE` | `/api/v1/courses/:id/assignments/:assignmentId` | Read, edit, or delete an assignment |
+| `GET` | `/api/v1/courses/:id/assignments/:assignmentId/submissions` | List submissions and enrollment count |
+| `PUT` | `/api/v1/courses/:id/assignments/:assignmentId/submissions/:submissionId/grade` | Grade or regrade a submission |
+
+Student assignment endpoints require an active student enrolled in the
+assignment's course:
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/v1/assignments?courseId=:id` | List assignments for enrolled courses; optionally filter by course |
+| `GET` | `/api/v1/assignments/:assignmentId` | Read an assignment and the student's own submission |
+| `PUT` | `/api/v1/assignments/:assignmentId/submission` | Submit or update text and/or a multipart file |
+
+Grading and assignment/course deletion are audit-logged. Students cannot modify
+a graded submission, and instructors cannot grade above the assignment's
+maximum score.
+
 ### Student API
 
 | Method | Path | Purpose |
