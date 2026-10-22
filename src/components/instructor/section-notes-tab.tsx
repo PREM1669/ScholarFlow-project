@@ -6,6 +6,7 @@ import { MarkdownContent } from "@/components/shared/markdown-content";
 import { RichTextEditor } from "@/components/instructor/rich-text-editor";
 import { useSaveSection } from "@/hooks/use-sections";
 import { cn } from "@/lib/utils";
+import { normalizeLegacyMarkdown } from "@/lib/markdown";
 import type { SectionDetail } from "@/types";
 
 export function SectionNotesTab({
@@ -16,7 +17,9 @@ export function SectionNotesTab({
   section: SectionDetail;
 }) {
   const save = useSaveSection(courseId, section.id);
-  const [markdown, setMarkdown] = useState(section.content);
+  const [markdown, setMarkdown] = useState(() =>
+    normalizeLegacyMarkdown(section.content),
+  );
   const [preview, setPreview] = useState(false);
   const dirty = markdown !== section.content;
 
@@ -24,7 +27,7 @@ export function SectionNotesTab({
     <div className="max-w-3xl space-y-3">
       <div className={cn(preview && "hidden")}>
         <RichTextEditor
-          value={section.content}
+          value={markdown}
           onChange={setMarkdown}
         />
       </div>
