@@ -61,6 +61,78 @@ async function main() {
     });
   }
 
+  const assignmentCourse = await prisma.course.findFirstOrThrow({
+    where: {
+      instructorId: instructor.id,
+      title: "Foundations of Web Development",
+    },
+  });
+  const student = await prisma.user.findUniqueOrThrow({
+    where: { email: "student@scholarflow.dev" },
+  });
+  await prisma.enrollment.upsert({
+    where: {
+      userId_courseId: { userId: student.id, courseId: assignmentCourse.id },
+    },
+    update: {},
+    create: { userId: student.id, courseId: assignmentCourse.id },
+  });
+  const assignmentSeeds = [
+    {
+      title: "Build an accessible web page",
+      prompt:
+        "Create a semantic HTML page with a clear heading structure, accessible links, and a short explanation of your design decisions.",
+      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      maxScore: 100,
+    },
+    {
+      title: "HTML structure reflection",
+      prompt:
+        "Explain how semantic HTML improves accessibility and describe two elements you used in your work.",
+      dueDate: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      maxScore: 50,
+    },
+  ];
+  const seededAssignments = [];
+  for (const assignment of assignmentSeeds) {
+    const existing = await prisma.assignment.findFirst({
+      where: { courseId: assignmentCourse.id, title: assignment.title },
+    });
+    seededAssignments.push(
+      existing
+        ? await prisma.assignment.update({
+            where: { id: existing.id },
+            data: assignment,
+          })
+        : await prisma.assignment.create({
+            data: { ...assignment, courseId: assignmentCourse.id },
+          }),
+    );
+  }
+  const lateAssignment = seededAssignments[1];
+  await prisma.submission.upsert({
+    where: {
+      assignmentId_studentId: {
+        assignmentId: lateAssignment.id,
+        studentId: student.id,
+      },
+    },
+    update: {
+      textAnswer:
+        "Semantic elements describe the purpose of each region. I used main for the page content and nav for its links.",
+      submittedAt: new Date(lateAssignment.dueDate.getTime() + 60 * 60 * 1000),
+      isLate: true,
+    },
+    create: {
+      assignmentId: lateAssignment.id,
+      studentId: student.id,
+      textAnswer:
+        "Semantic elements describe the purpose of each region. I used main for the page content and nav for its links.",
+      submittedAt: new Date(lateAssignment.dueDate.getTime() + 60 * 60 * 1000),
+      isLate: true,
+    },
+  });
+
   const htmlSection = await prisma.section.findFirst({
     where: {
       title: "Semantic HTML",

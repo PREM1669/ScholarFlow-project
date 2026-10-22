@@ -137,6 +137,9 @@ model Assignment {
   dueDate     DateTime
   maxScore    Int          @default(100)
   submissions Submission[]
+  createdAt   DateTime     @default(now())
+
+  @@index([courseId, dueDate])
 }
 
 model Submission {
@@ -147,12 +150,17 @@ model Submission {
   student      User       @relation(fields: [studentId], references: [id])
   textAnswer   String?
   fileUrl      String?
+  fileName     String?
+  filePublicId String?
+  isLate       Boolean    @default(false)
   score        Int?
   feedback     String?
   gradedAt     DateTime?
   submittedAt  DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 
   @@unique([assignmentId, studentId])
+  @@index([studentId])
 }
 
 model AuditLog {
