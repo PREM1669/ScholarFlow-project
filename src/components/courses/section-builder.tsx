@@ -18,6 +18,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import Link from "next/link";
 import {
   ArrowDown,
   ArrowUp,
@@ -287,6 +288,18 @@ function SortableSection({
               {section.title}
             </span>
             <div className="flex items-center gap-1">
+              <Button
+                asChild
+                type="button"
+                variant="outline"
+                size="sm"
+              >
+                <Link
+                  href={`/instructor/courses/${courseId}/sections/${section.id}`}
+                >
+                  Edit content
+                </Link>
+              </Button>
               <Button
                 type="button"
                 variant="ghost"
