@@ -54,6 +54,50 @@ async function main() {
     });
   }
 
+  const htmlSection = await prisma.section.findFirst({
+    where: {
+      title: "Semantic HTML",
+      course: { instructorId: instructor.id },
+    },
+  });
+  if (htmlSection) {
+    const existingQuiz = await prisma.quiz.findUnique({
+      where: { sectionId: htmlSection.id },
+    });
+    if (!existingQuiz) {
+      await prisma.quiz.create({
+        data: {
+          sectionId: htmlSection.id,
+          questions: {
+            create: [
+              {
+                order: 0,
+                type: "MCQ",
+                text: "Which tag creates the largest heading?",
+                options: ["<h6>", "<h1>", "<head>", "<title>"],
+                correctIndex: 1,
+              },
+              {
+                order: 1,
+                type: "TRUE_FALSE",
+                text: "HTML stands for HyperText Markup Language.",
+                options: ["True", "False"],
+                correctIndex: 0,
+              },
+              {
+                order: 2,
+                type: "MCQ",
+                text: "Which attribute sets the destination of a link?",
+                options: ["src", "href", "alt", "title"],
+                correctIndex: 1,
+              },
+            ],
+          },
+        },
+      });
+    }
+  }
+
   console.log("Seeded the ScholarFlow demo accounts.");
 }
 

@@ -41,3 +41,25 @@ Course thumbnail uploads require valid `CLOUDINARY_CLOUD_NAME`,
 limited to JPG, PNG, or WebP files up to 2 MB. Course editing works without
 Cloudinary, but thumbnail uploads return a configuration error until those
 credentials are set.
+
+### Section content and quizzes
+
+From a course editor, use **Edit content** on a section to author Markdown notes,
+embed a YouTube or Vimeo video, and build multiple-choice or true/false quizzes.
+Notes are stored as Markdown and rendered without raw HTML. Quiz questions are
+ordered, and saving a quiz replaces its questions and clears existing attempts;
+the editor warns and asks for confirmation when attempts exist.
+
+Instructor API endpoints:
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/v1/courses/:id/sections/:sectionId` | Read section notes and video |
+| `PATCH` | `/api/v1/courses/:id/sections/:sectionId` | Update section title, notes, or video |
+| `GET` | `/api/v1/courses/:id/sections/:sectionId/quiz` | Read quiz questions and correct answers |
+| `PUT` | `/api/v1/courses/:id/sections/:sectionId/quiz` | Replace quiz and clear previous attempts |
+| `DELETE` | `/api/v1/courses/:id/sections/:sectionId/quiz` | Delete quiz and its attempts |
+
+All endpoints require an active instructor or admin; instructors can only
+access sections belonging to their own courses. Student-facing quiz APIs must
+not expose `correctIndex`.
