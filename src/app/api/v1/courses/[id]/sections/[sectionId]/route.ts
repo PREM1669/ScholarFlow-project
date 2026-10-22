@@ -1,30 +1,43 @@
-import { handleApiError, HttpError } from "@/lib/api-error";
-import { getManagedCourse } from "@/lib/ownership";
+import { handleApiError } from "@/lib/api-error";
+import { getManagedSection } from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/rbac";
-import { sectionSchema } from "@/lib/validators/course";
+import { sectionUpdateSchema } from "@/lib/validators/section";
 
 type RouteContext = { params: { id: string; sectionId: string } };
 
-async function getSection(courseId: string, sectionId: string) {
-  const section = await prisma.section.findFirst({
-    where: { id: sectionId, courseId },
-  });
-  if (!section) throw new HttpError(404, "Section not found");
-  return section;
+const sectionSelect = {
+  id: true,
+  courseId: true,
+  title: true,
+  order: true,
+  content: true,
+  videoUrl: true,
+} as const;
+
+export async function GET(_req: Request, { params }: RouteContext) {
+  try {
+    const user = await requireRole("INSTRUCTOR", "ADMIN");
+    const section = await getManagedSection(
+      params.id,
+      params.sectionId,
+      user,
+    );
+    return Response.json(section);
+  } catch (error) {
+    return handleApiError(error);
+  }
 }
 
 export async function PATCH(req: Request, { params }: RouteContext) {
   try {
     const user = await requireRole("INSTRUCTOR", "ADMIN");
-    await getManagedCourse(params.id, user);
-    await getSection(params.id, params.sectionId);
-    const { title } = sectionSchema.parse(await req.json());
-
+    await getManagedSection(params.id, params.sectionId, user);
+    const data = sectionUpdateSchema.parse(await req.json());
     const section = await prisma.section.update({
       where: { id: params.sectionId },
-      data: { title },
-      select: { id: true, title: true, order: true, videoUrl: true },
+      data,
+      select: sectionSelect,
     });
     return Response.json(section);
   } catch (error) {
@@ -35,8 +48,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
 export async function DELETE(_req: Request, { params }: RouteContext) {
   try {
     const user = await requireRole("INSTRUCTOR", "ADMIN");
-    await getManagedCourse(params.id, user);
-    await getSection(params.id, params.sectionId);
+    await getManagedSection(params.id, params.sectionId, user);
 
     const remaining = await prisma.section.findMany({
       where: { courseId: params.id, NOT: { id: params.sectionId } },

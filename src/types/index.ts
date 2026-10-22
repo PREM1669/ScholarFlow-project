@@ -1,6 +1,6 @@
-import type { Role } from "@prisma/client";
+import type { QuestionType, Role } from "@prisma/client";
 
-export type { Role };
+export type { QuestionType, Role };
 export const ROLES = ["ADMIN", "INSTRUCTOR", "STUDENT"] as const;
 
 export type CourseDetail = {
@@ -22,4 +22,22 @@ export type SectionItem = {
   title: string;
   order: number;
   videoUrl: string | null;
+};
+
+export type SectionDetail = SectionItem & {
+  courseId: string;
+  content: string;
+};
+
+export type QuizQuestion = {
+  type: QuestionType;
+  text: string;
+  options: string[];
+  correctIndex: number;
+};
+
+export type QuizDetail = {
+  id: string;
+  attemptCount: number;
+  questions: (QuizQuestion & { id: string })[];
 };

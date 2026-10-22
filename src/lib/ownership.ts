@@ -13,3 +13,16 @@ export async function getManagedCourse(
   }
   return course;
 }
+
+export async function getManagedSection(
+  courseId: string,
+  sectionId: string,
+  user: { id: string; role: Role },
+) {
+  await getManagedCourse(courseId, user);
+  const section = await prisma.section.findFirst({
+    where: { id: sectionId, courseId },
+  });
+  if (!section) throw new HttpError(404, "Section not found");
+  return section;
+}

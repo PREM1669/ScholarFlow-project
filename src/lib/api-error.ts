@@ -14,7 +14,10 @@ export function handleApiError(error: unknown) {
 
   if (error instanceof ZodError) {
     return Response.json(
-      { error: "Validation failed", issues: error.flatten().fieldErrors },
+      {
+        error: error.issues[0]?.message ?? "Validation failed",
+        issues: error.flatten().fieldErrors,
+      },
       { status: 400 },
     );
   }
