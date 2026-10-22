@@ -64,3 +64,38 @@ Instructor API endpoints:
 All endpoints require an active instructor or admin; instructors can only
 access sections belonging to their own courses. Student-facing quiz APIs must
 not expose `correctIndex`.
+
+## Student portal
+
+Students can browse published courses at `/student/courses`, filter the catalog
+using URL-backed search/category/price/sort/page controls, enroll in a course,
+and study its section content. Course previews expose the outline only; lesson
+content and questions are returned only to enrolled students. Quiz attempts are
+graded server-side, and only submitted results reveal correct answers.
+
+Progress is tracked per section. A section with a quiz cannot be completed until
+the student submits it. Completing all current sections unlocks a downloadable
+PDF certificate. Unenrolling permanently clears course progress and quiz
+attempts. The `/student/my-learning` page lists enrollment progress and
+achievements.
+
+### Student API
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/v1/catalog` | Search/filter published courses with pagination |
+| `GET` | `/api/v1/catalog/:id` | Course outline and enrollment state |
+| `GET` | `/api/v1/enrollments` | Student enrollments, progress and achievements |
+| `POST` | `/api/v1/enrollments` | Enroll using `{ "courseId": "..." }` |
+| `DELETE` | `/api/v1/enrollments/:courseId` | Unenroll and clear progress/attempts |
+| `GET` | `/api/v1/enrollments/:courseId/certificate` | Download a completion certificate |
+| `GET` | `/api/v1/learn/:courseId` | Enrolled course content without pre-attempt answers |
+| `PUT` | `/api/v1/learn/:courseId/sections/:sectionId/progress` | Set section completion |
+| `PUT` | `/api/v1/learn/:courseId/sections/:sectionId/quiz/attempt` | Submit or replace a quiz attempt |
+
+Course categories are managed as part of course details. Local seeding adds
+published catalog examples for trying filters and pagination:
+
+```bash
+npx prisma db seed
+```

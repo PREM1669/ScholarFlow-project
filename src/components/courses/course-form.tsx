@@ -7,8 +7,10 @@ import { LoaderCircle, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { ThumbnailUploader } from "@/components/courses/thumbnail-uploader";
+import { COURSE_CATEGORIES } from "@/lib/constants";
 import { courseSchema, type CourseInput } from "@/lib/validators/course";
 import type { CourseDetail } from "@/types";
 
@@ -27,6 +29,7 @@ export function CourseForm({
     defaultValues: {
       title: course?.title ?? "",
       description: course?.description ?? "",
+      category: course?.category ?? "General",
       price: course?.price ?? 0,
       thumbnailUrl: course?.thumbnailUrl ?? null,
     },
@@ -37,6 +40,7 @@ export function CourseForm({
       form.reset({
         title: course.title,
         description: course.description,
+        category: course.category,
         price: course.price,
         thumbnailUrl: course.thumbnailUrl,
       });
@@ -84,6 +88,31 @@ export function CourseForm({
               <p className="text-sm text-destructive">
                 {errors.description.message}
               </p>
+            )}
+          </div>
+          <div className="max-w-xs space-y-2">
+            <Label htmlFor="course-category">Category</Label>
+            <Select
+              value={form.watch("category")}
+              onValueChange={(value) => {
+                const category = COURSE_CATEGORIES.find((item) => item === value);
+                if (category) form.setValue("category", category, {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                })
+              }}
+            >
+              <SelectTrigger id="course-category" aria-label="Category">
+                <SelectValue placeholder="Choose a category" />
+              </SelectTrigger>
+              <SelectContent>
+                {COURSE_CATEGORIES.map((category) => (
+                  <SelectItem key={category} value={category}>{category}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.category && (
+              <p className="text-sm text-destructive">{errors.category.message}</p>
             )}
           </div>
           <div className="max-w-xs space-y-2">

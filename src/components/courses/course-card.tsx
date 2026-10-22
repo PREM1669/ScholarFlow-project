@@ -1,11 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { BookOpen, Pencil, Trash2, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import { CourseThumbnail } from "@/components/shared/course-thumbnail";
+import { formatPrice } from "@/lib/utils";
 import type { CourseListItem } from "@/types";
 
 export function CourseCard({
@@ -17,27 +18,14 @@ export function CourseCard({
 }) {
   return (
     <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md">
-      <div className="relative aspect-[16/8] bg-slate-100">
-        {course.thumbnailUrl ? (
-          <Image
-            src={course.thumbnailUrl}
-            alt=""
-            fill
-            sizes="(max-width: 768px) 100vw, 400px"
-            className="object-cover"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-slate-300">
-            <BookOpen className="size-10" />
-          </div>
-        )}
+      <CourseThumbnail src={course.thumbnailUrl} alt="">
         <Badge
           variant={course.published ? "default" : "secondary"}
           className="absolute left-3 top-3 shadow-sm"
         >
           {course.published ? "Published" : "Draft"}
         </Badge>
-      </div>
+      </CourseThumbnail>
       <div className="space-y-4 p-5">
         <div className="min-h-16">
           <h2 className="line-clamp-2 font-semibold text-slate-900">
@@ -59,7 +47,7 @@ export function CourseCard({
             {course._count.enrollments === 1 ? "learner" : "learners"}
           </span>
           <span className="font-medium text-slate-700">
-            {course.price === 0 ? "Free" : `$${course.price.toFixed(2)}`}
+            {formatPrice(course.price)}
           </span>
         </div>
         <div className="flex items-center gap-2 border-t border-slate-100 pt-4">

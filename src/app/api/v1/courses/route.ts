@@ -27,6 +27,7 @@ export async function POST(req: Request) {
       data: {
         title: body.title,
         description: body.description,
+        category: body.category,
         price: body.price,
         thumbnailUrl: body.thumbnailUrl ?? null,
         instructorId: user.id,

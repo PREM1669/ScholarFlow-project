@@ -26,6 +26,13 @@ async function main() {
   const instructor = await prisma.user.findUniqueOrThrow({
     where: { email: "instructor@scholarflow.dev" },
   });
+  await prisma.course.updateMany({
+    where: {
+      title: "Foundations of Web Development",
+      instructorId: instructor.id,
+    },
+    data: { category: "Programming" },
+  });
   const existingCourse = await prisma.course.findFirst({
     where: {
       instructorId: instructor.id,
@@ -96,6 +103,44 @@ async function main() {
         },
       });
     }
+  }
+
+  const extraCourses = [
+    { title: "Python for Beginners", category: "Programming", price: 0 },
+    { title: "UI Design Principles", category: "Design", price: 19.99 },
+    { title: "Startup Finance Basics", category: "Business", price: 29 },
+    { title: "Data Analysis with Pandas", category: "Data Science", price: 39.5 },
+    { title: "Spanish for Travelers", category: "Language", price: 0 },
+    { title: "Advanced React Patterns", category: "Programming", price: 49 },
+    { title: "Public Speaking Essentials", category: "Business", price: 15 },
+  ];
+  for (const course of extraCourses) {
+    const existing = await prisma.course.findFirst({
+      where: { title: course.title, instructorId: instructor.id },
+    });
+    if (existing) continue;
+    await prisma.course.create({
+      data: {
+        ...course,
+        description: `A practical introduction to ${course.title.toLowerCase()}, with hands-on examples and clear explanations.`,
+        published: true,
+        instructorId: instructor.id,
+        sections: {
+          create: [
+            {
+              title: "Introduction",
+              order: 1,
+              content: `## Welcome\n\nThis section introduces **${course.title}**.`,
+            },
+            {
+              title: "Core Concepts",
+              order: 2,
+              content: "## Core concepts\n\n- Idea one\n- Idea two\n- Idea three",
+            },
+          ],
+        },
+      },
+    });
   }
 
   console.log("Seeded the ScholarFlow demo accounts.");

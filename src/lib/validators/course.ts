@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { COURSE_CATEGORIES } from "@/lib/constants";
 
 const cloudinaryUrl = z
   .string()
@@ -17,6 +18,7 @@ const cloudinaryUrl = z
 export const courseSchema = z.object({
   title: z.string().trim().min(3, "At least 3 characters").max(100),
   description: z.string().trim().min(10, "At least 10 characters").max(2000),
+  category: z.enum(COURSE_CATEGORIES),
   price: z.number().min(0, "Price can't be negative").max(100000),
   thumbnailUrl: cloudinaryUrl.nullish(),
 });
