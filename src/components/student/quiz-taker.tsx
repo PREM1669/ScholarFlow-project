@@ -5,8 +5,6 @@ import { Check, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useSubmitQuiz } from "@/hooks/use-learn";
 import type { LearnQuestion, QuizResult, QuizResultItem } from "@/types";
 import { cn } from "@/lib/utils";
@@ -68,19 +66,43 @@ export function QuizTaker({ courseId, sectionId, questions, attempt }: {
         <>
           {questions.map((question, questionIndex) => (
             <Card key={question.id} className="space-y-3 p-4">
-              <p className="font-medium">{questionIndex + 1}. {question.text}</p>
-              <RadioGroup
-                value={answers[question.id] === undefined ? "" : String(answers[question.id])}
-                onValueChange={(value) => setAnswers((previous) => ({ ...previous, [question.id]: Number(value) }))}
-                className="space-y-2"
-              >
-                {question.options.map((option, optionIndex) => (
-                  <div key={optionIndex} className="flex items-center gap-2">
-                    <RadioGroupItem value={String(optionIndex)} id={`${question.id}-${optionIndex}`} />
-                    <Label htmlFor={`${question.id}-${optionIndex}`} className="cursor-pointer">{option}</Label>
-                  </div>
-                ))}
-              </RadioGroup>
+              <fieldset className="space-y-3">
+                <legend className="font-medium">
+                  {questionIndex + 1}. {question.text}
+                </legend>
+                <div className="space-y-2">
+                  {question.options.map((option, optionIndex) => (
+                    <label
+                      key={optionIndex}
+                      className={cn(
+                        "flex cursor-pointer items-center gap-3 rounded-md border px-3 py-2 transition-colors hover:bg-muted/60",
+                        answers[question.id] === optionIndex &&
+                          "border-primary bg-primary/5 ring-1 ring-primary/20",
+                      )}
+                    >
+                      <input
+                        type="radio"
+                        name={`quiz-${sectionId}-${question.id}`}
+                        value={optionIndex}
+                        checked={answers[question.id] === optionIndex}
+                        onChange={() =>
+                          setAnswers((previous) => ({
+                            ...previous,
+                            [question.id]: optionIndex,
+                          }))
+                        }
+                        className="h-4 w-4 shrink-0 accent-primary"
+                      />
+                      <span className="flex-1 text-sm">{option}</span>
+                      {answers[question.id] === optionIndex && (
+                        <span className="text-xs font-semibold text-primary">
+                          Selected answer
+                        </span>
+                      )}
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
             </Card>
           ))}
           <div className="flex flex-wrap items-center gap-2">
