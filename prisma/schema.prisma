@@ -107,6 +107,9 @@ model Question {
   text         String
   options      Json
   correctIndex Int
+  order        Int          @default(0)
+
+  @@index([quizId, order])
 }
 
 model QuizAttempt {
