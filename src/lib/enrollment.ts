@@ -9,6 +9,16 @@ export async function requireEnrollment(userId: string, courseId: string) {
   return enrollment;
 }
 
+export async function getEnrolledAssignment(userId: string, assignmentId: string) {
+  const assignment = await prisma.assignment.findUnique({
+    where: { id: assignmentId },
+    include: { course: { select: { id: true, title: true } } },
+  });
+  if (!assignment) throw new HttpError(404, "Assignment not found");
+  await requireEnrollment(userId, assignment.courseId);
+  return assignment;
+}
+
 export async function getEnrolledSection(
   userId: string,
   courseId: string,

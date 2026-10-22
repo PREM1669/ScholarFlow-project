@@ -1,4 +1,5 @@
 import { handleApiError, HttpError } from "@/lib/api-error";
+import { deleteRawAsset } from "@/lib/cloudinary";
 import { getManagedCourse } from "@/lib/ownership";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/rbac";
@@ -48,6 +49,10 @@ export async function DELETE(_req: Request, { params }: RouteContext) {
     const user = await requireRole("INSTRUCTOR", "ADMIN");
     const course = await getManagedCourse(params.id, user);
 
+    const submissions = await prisma.submission.findMany({
+      where: { assignment: { courseId: course.id }, filePublicId: { not: null } },
+      select: { filePublicId: true },
+    });
     await prisma.$transaction([
       prisma.auditLog.create({
         data: {
@@ -59,6 +64,11 @@ export async function DELETE(_req: Request, { params }: RouteContext) {
       }),
       prisma.course.delete({ where: { id: course.id } }),
     ]);
+    await Promise.all(
+      submissions.flatMap((submission) =>
+        submission.filePublicId ? [deleteRawAsset(submission.filePublicId)] : [],
+      ),
+    );
     return Response.json({ ok: true });
   } catch (error) {
     return handleApiError(error);

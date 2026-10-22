@@ -26,3 +26,16 @@ export async function getManagedSection(
   if (!section) throw new HttpError(404, "Section not found");
   return section;
 }
+
+export async function getManagedAssignment(
+  courseId: string,
+  assignmentId: string,
+  user: { id: string; role: Role },
+) {
+  await getManagedCourse(courseId, user);
+  const assignment = await prisma.assignment.findFirst({
+    where: { id: assignmentId, courseId },
+  });
+  if (!assignment) throw new HttpError(404, "Assignment not found");
+  return assignment;
+}
