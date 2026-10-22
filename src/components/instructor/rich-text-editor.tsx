@@ -163,7 +163,11 @@ export function RichTextEditor({
         },
       }),
       Placeholder.configure({ placeholder }),
-      Markdown.configure({ html: false, linkify: true }),
+      Markdown.configure({
+        html: false,
+        linkify: true,
+        transformPastedText: true,
+      }),
     ],
     content: value,
     immediatelyRender: false,

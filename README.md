@@ -46,9 +46,10 @@ credentials are set.
 
 From a course editor, use **Edit content** on a section to author Markdown notes,
 embed a YouTube or Vimeo video, and build multiple-choice or true/false quizzes.
-Notes are stored as Markdown and rendered without raw HTML. Quiz questions are
-ordered, and saving a quiz replaces its questions and clears existing attempts;
-the editor warns and asks for confirmation when attempts exist.
+Notes are stored as Markdown, pasted Markdown is formatted in the editor, and
+previews render without raw HTML. Quiz questions are ordered, and saving a quiz
+replaces its questions and clears existing attempts; the editor warns and asks
+for confirmation when attempts exist.
 
 Instructor API endpoints:
 
