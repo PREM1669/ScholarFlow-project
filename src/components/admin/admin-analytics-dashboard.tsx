@@ -9,6 +9,7 @@ import {
   ClipboardCheck,
   GraduationCap,
   LoaderCircle,
+  ShieldCheck,
   Users,
 } from "lucide-react";
 import {
@@ -65,52 +66,128 @@ export function AdminAnalyticsDashboard({ name }: { name: string }) {
 
   const totals = data?.totals;
   const stats = [
-    { label: "Total users", value: totals?.users, icon: Users },
-    { label: "Students", value: totals?.students, icon: GraduationCap },
-    { label: "Instructors", value: totals?.instructors, icon: Users },
-    { label: "Active users", value: totals?.activeUsers, icon: Activity },
-    { label: "Courses", value: totals?.courses, icon: BookOpen },
-    { label: "Enrollments", value: totals?.enrollments, icon: ClipboardCheck },
+    {
+      label: "Total users",
+      value: totals?.users,
+      detail: "Accounts across all roles",
+      icon: Users,
+      iconClass: "bg-blue-50 text-blue-700",
+    },
+    {
+      label: "Students",
+      value: totals?.students,
+      detail: "Registered learners",
+      icon: GraduationCap,
+      iconClass: "bg-violet-50 text-violet-700",
+    },
+    {
+      label: "Instructors",
+      value: totals?.instructors,
+      detail: "Teaching accounts",
+      icon: Users,
+      iconClass: "bg-cyan-50 text-cyan-700",
+    },
+    {
+      label: "Active users",
+      value: totals?.activeUsers,
+      detail: `Active in the last ${days} days`,
+      icon: Activity,
+      iconClass: "bg-emerald-50 text-emerald-700",
+    },
+    {
+      label: "Courses",
+      value: totals?.courses,
+      detail: `${totals?.publishedCourses ?? 0} published`,
+      icon: BookOpen,
+      iconClass: "bg-amber-50 text-amber-700",
+    },
+    {
+      label: "Enrollments",
+      value: totals?.enrollments,
+      detail: "Across all courses",
+      icon: ClipboardCheck,
+      iconClass: "bg-sky-50 text-sky-700",
+    },
     {
       label: "Completion rate",
       value: totals ? `${totals.completionRate}%` : undefined,
+      detail: "Completed enrollments",
       icon: CheckCircle2,
+      iconClass: "bg-teal-50 text-teal-700",
     },
     {
       label: "Simulated revenue",
       value: totals ? formatMoney(totals.revenue) : undefined,
+      detail: "Based on current course prices",
       icon: CircleDollarSign,
+      iconClass: "bg-green-50 text-green-700",
     },
     {
       label: "Pending grading",
       value: totals?.pendingGrading,
+      detail: "Submissions awaiting review",
       icon: ClipboardCheck,
+      iconClass: "bg-orange-50 text-orange-700",
     },
-    { label: "AI questions", value: totals?.aiQuestions, icon: Activity },
+    {
+      label: "AI questions",
+      value: totals?.aiQuestions,
+      detail: `Asked in the last ${days} days`,
+      icon: Activity,
+      iconClass: "bg-indigo-50 text-indigo-700",
+    },
+    {
+      label: "Suspended accounts",
+      value: totals?.suspended,
+      detail: "Access currently disabled",
+      icon: ShieldCheck,
+      iconClass: "bg-rose-50 text-rose-700",
+    },
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-sm text-muted-foreground">Welcome back, {name}</p>
-          <h1 className="text-3xl font-bold tracking-tight">Platform analytics</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Activity and learning performance across ScholarFlow.
-          </p>
+    <div className="space-y-8">
+      <div className="flex flex-col gap-5 border-b border-slate-200/80 pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-3 py-1 text-xs font-semibold text-blue-700 shadow-sm">
+            <span className="size-1.5 rounded-full bg-emerald-500" />
+            Platform overview
+          </div>
+          <div>
+            <p className="text-sm text-slate-500">Welcome back, {name}</p>
+            <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+              Platform analytics
+            </h1>
+            <p className="mt-2 text-sm text-slate-600">
+              A clear view of learning activity and platform performance.
+            </p>
+          </div>
         </div>
-        <div className="flex gap-2" aria-label="Analytics date range">
-          {ranges.map((range) => (
-            <Button
-              key={range}
-              size="sm"
-              variant={range === days ? "default" : "outline"}
-              onClick={() => setDays(range)}
-              aria-pressed={range === days}
-            >
-              {range} days
-            </Button>
-          ))}
+        <div className="flex flex-col gap-2 sm:items-end">
+          <span className="text-xs font-medium text-slate-500">
+            Analytics period
+          </span>
+          <div
+            className="inline-flex w-fit rounded-xl border border-slate-200 bg-white p-1 shadow-sm"
+            aria-label="Analytics date range"
+          >
+            {ranges.map((range) => (
+              <Button
+                key={range}
+                size="sm"
+                variant={range === days ? "default" : "ghost"}
+                className={
+                  range === days
+                    ? "rounded-lg px-4 shadow-sm"
+                    : "rounded-lg px-4 text-slate-600"
+                }
+                onClick={() => setDays(range)}
+                aria-pressed={range === days}
+              >
+                {range} days
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -120,29 +197,59 @@ export function AdminAnalyticsDashboard({ name }: { name: string }) {
         </div>
       ) : (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-            {stats.map(({ label, value, icon: Icon }) => (
-              <Card key={label}>
-                <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    {label}
-                  </CardTitle>
-                  <Icon className="size-4 text-muted-foreground" aria-hidden="true" />
-                </CardHeader>
-                <CardContent>
-                  <p className="text-2xl font-bold">{value ?? "—"}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <section aria-label="Platform key metrics">
+            <div className="mb-4 flex items-end justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-semibold tracking-tight text-slate-900">
+                  At a glance
+                </h2>
+                <p className="mt-1 text-sm text-slate-500">
+                  Key measures for your learning platform.
+                </p>
+              </div>
+              <span className="hidden text-xs text-slate-500 sm:inline">
+                Activity windows use UTC
+              </span>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {stats.map(({ label, value, detail, icon: Icon, iconClass }) => (
+                <Card
+                  key={label}
+                  className="rounded-2xl border border-slate-200/80 bg-white py-0 shadow-sm shadow-slate-200/60 ring-0 transition-shadow hover:shadow-md"
+                >
+                  <CardHeader className="flex flex-row items-center justify-between gap-3 px-5 pt-5 pb-2">
+                    <CardTitle className="text-sm font-medium text-slate-600">
+                      {label}
+                    </CardTitle>
+                    <span
+                      className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${iconClass}`}
+                    >
+                      <Icon className="size-[18px]" aria-hidden="true" />
+                    </span>
+                  </CardHeader>
+                  <CardContent className="px-5 pb-5">
+                    <p className="text-3xl font-bold tracking-tight text-slate-950">
+                      {value ?? "—"}
+                    </p>
+                    <p className="mt-1.5 text-xs text-slate-500">{detail}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
 
           {data && (
             <>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Daily platform activity</CardTitle>
-                </CardHeader>
-                <CardContent className="grid gap-8 lg:grid-cols-2">
+              <section className="space-y-4" aria-label="Daily platform analytics">
+                <div>
+                  <h2 className="text-lg font-semibold tracking-tight text-slate-900">
+                    Trends over time
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Daily platform activity for the selected period.
+                  </p>
+                </div>
+                <div className="grid gap-4 lg:grid-cols-2">
                   <Chart
                     title="Enrollments and signups"
                     data={data.series}
@@ -159,38 +266,56 @@ export function AdminAnalyticsDashboard({ name }: { name: string }) {
                     keys={["revenue"]}
                     currency
                   />
-                </CardContent>
-              </Card>
+                </div>
+              </section>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Top courses by enrollment</CardTitle>
+              <Card className="rounded-2xl border border-slate-200/80 bg-white shadow-sm shadow-slate-200/60 ring-0">
+                <CardHeader className="border-b border-slate-100 px-6 py-5">
+                  <CardTitle className="text-lg font-semibold tracking-tight text-slate-900">
+                    Top courses by enrollment
+                  </CardTitle>
+                  <p className="text-sm text-slate-500">
+                    Enrollment, completion, and simulated revenue by course.
+                  </p>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-6 py-4">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                      <thead>
-                        <tr className="border-b text-muted-foreground">
-                          <th className="p-2 font-medium">Course</th>
-                          <th className="p-2 font-medium">Instructor</th>
-                          <th className="p-2 font-medium">Enrollments</th>
-                          <th className="p-2 font-medium">Completion</th>
-                          <th className="p-2 font-medium">Revenue</th>
+                      <thead className="text-xs uppercase tracking-wide text-slate-500">
+                        <tr className="border-b border-slate-100">
+                          <th className="px-3 py-3 font-semibold">Course</th>
+                          <th className="px-3 py-3 font-semibold">Instructor</th>
+                          <th className="px-3 py-3 font-semibold">Enrollments</th>
+                          <th className="px-3 py-3 font-semibold">Completion</th>
+                          <th className="px-3 py-3 font-semibold">Revenue</th>
                         </tr>
                       </thead>
                       <tbody>
                         {data.topCourses.map((course) => (
-                          <tr key={course.id} className="border-b last:border-0">
-                            <td className="p-2 font-medium">{course.title}</td>
-                            <td className="p-2">{course.instructorName}</td>
-                            <td className="p-2">{course.enrollments}</td>
-                            <td className="p-2">{course.completionRate}%</td>
-                            <td className="p-2">{formatMoney(course.revenue)}</td>
+                          <tr
+                            key={course.id}
+                            className="border-b border-slate-100 last:border-0 hover:bg-slate-50/80"
+                          >
+                            <td className="px-3 py-3.5 font-semibold text-slate-900">
+                              {course.title}
+                            </td>
+                            <td className="px-3 py-3.5 text-slate-600">
+                              {course.instructorName}
+                            </td>
+                            <td className="px-3 py-3.5 tabular-nums text-slate-700">
+                              {course.enrollments}
+                            </td>
+                            <td className="px-3 py-3.5 tabular-nums text-slate-700">
+                              {course.completionRate}%
+                            </td>
+                            <td className="px-3 py-3.5 font-medium tabular-nums text-slate-900">
+                              {formatMoney(course.revenue)}
+                            </td>
                           </tr>
                         ))}
                         {data.topCourses.length === 0 && (
                           <tr>
-                            <td colSpan={5} className="p-6 text-center text-muted-foreground">
+                            <td colSpan={5} className="p-8 text-center text-slate-500">
                               No courses to display yet.
                             </td>
                           </tr>
@@ -201,13 +326,18 @@ export function AdminAnalyticsDashboard({ name }: { name: string }) {
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Course completion rates</CardTitle>
+              <Card className="rounded-2xl border border-slate-200/80 bg-white shadow-sm shadow-slate-200/60 ring-0">
+                <CardHeader className="px-6 pt-6 pb-2">
+                  <CardTitle className="text-lg font-semibold tracking-tight text-slate-900">
+                    Course completion rates
+                  </CardTitle>
+                  <p className="text-sm text-slate-500">
+                    Share of enrollments completed for top courses.
+                  </p>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-6 pb-6">
                   {data.topCourses.length === 0 ? (
-                    <p className="p-6 text-center text-sm text-muted-foreground">
+                    <p className="p-6 text-center text-sm text-slate-500">
                       No courses to display yet.
                     </p>
                   ) : (
@@ -267,21 +397,30 @@ type ChartProps = {
 
 function Chart({ title, data, keys, currency = false }: ChartProps) {
   return (
-    <div className="min-w-0">
-      <h3 className="mb-3 text-sm font-medium">{title}</h3>
-      <div className="h-64 w-full">
-        <ResponsiveContainer width="100%" height="100%">
+    <Card className="min-w-0 rounded-2xl border border-slate-200/80 bg-white shadow-sm shadow-slate-200/60 ring-0">
+      <CardHeader className="px-5 pt-5 pb-0">
+        <CardTitle className="text-sm font-semibold text-slate-800">
+          {title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="px-4 pt-4 pb-5">
+        <div className="h-64 w-full">
+          <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="hsl(var(--border))"
+              vertical={false}
+            />
             <XAxis
               dataKey="date"
               tickFormatter={formatDayLabel}
               minTickGap={24}
-              tick={{ fontSize: 11 }}
+              tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
             />
             <YAxis
               width={currency ? 62 : 38}
-              tick={{ fontSize: 11 }}
+              tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
               tickFormatter={(value: number) =>
                 currency ? `$${value.toLocaleString()}` : value.toString()
               }
@@ -311,9 +450,10 @@ function Chart({ title, data, keys, currency = false }: ChartProps) {
                 strokeWidth={2}
               />
             ))}
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
