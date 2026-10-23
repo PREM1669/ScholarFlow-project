@@ -27,6 +27,19 @@ export const authOptions: NextAuthOptions = {
         if (!valid) return null;
         if (!user.isActive) throw new Error("ACCOUNT_SUSPENDED");
 
+        try {
+          await prisma.auditLog.create({
+            data: {
+              userId: user.id,
+              action: "LOGIN",
+              entity: "User",
+              entityId: user.id,
+            },
+          });
+        } catch (error) {
+          console.error("Could not record login", error);
+        }
+
         return {
           id: user.id,
           name: user.name,

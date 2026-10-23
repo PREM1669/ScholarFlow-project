@@ -30,6 +30,34 @@ Protected portal routes are under `/student`, `/instructor`, and `/admin`.
 Server layouts and API handlers also check the current database role and
 account status.
 
+### Admin analytics and user management
+
+The admin dashboard at `/admin/dashboard` shows platform activity for the
+selected 7-, 30-, or 90-day UTC window. Active users are users with a login,
+enrollment, course completion, quiz attempt, assignment submission, AI
+question, or (for instructors) course creation during that window. Revenue is
+simulated using each course's current price multiplied by its current
+enrollments; it is not payment data and can change when a course price or
+enrollment changes.
+
+Admins can search and filter accounts at `/admin/users`, and suspend or
+reactivate non-admin accounts. Login and account-status changes are recorded
+in the audit log.
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/v1/admin/analytics?days=7\|30\|90` | Admin-only dashboard metrics, UTC daily series, and top courses |
+| `GET` | `/api/v1/admin/users?q=&role=&status=&page=` | Admin-only, 10-user paginated account search |
+| `PATCH` | `/api/v1/admin/users/:id/status` | Admin-only status update with `{ "isActive": false }` or `{ "isActive": true }` |
+
+To create a repeatable local analytics dataset, run the base seed first and
+then `npm run db:seed:demo`. This recreates 45 demo students
+(`demo.student1@demo.scholarflow.dev` through `demo.student45@demo.scholarflow.dev`)
+with the password `DemoPass123!`, sample enrollments, progress, logins, and AI
+activity spanning the last 90 days. Students 1 and 24 are suspended. This seed
+deletes and recreates only users with the `demo.student` email prefix and their
+related records; do not run it against production data.
+
 ## Instructor courses
 
 Instructors can manage courses at `/instructor/courses`; admins can manage all

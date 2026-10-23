@@ -4,6 +4,61 @@ import type { CourseCategory } from "@/lib/constants";
 export type { QuestionType, Role };
 export const ROLES = ["ADMIN", "INSTRUCTOR", "STUDENT"] as const;
 
+export type AdminAnalytics = {
+  days: number;
+  generatedAt: string;
+  totals: {
+    users: number;
+    students: number;
+    instructors: number;
+    admins: number;
+    suspended: number;
+    courses: number;
+    publishedCourses: number;
+    enrollments: number;
+    completedEnrollments: number;
+    completionRate: number;
+    revenue: number;
+    pendingGrading: number;
+    activeUsers: number;
+    aiQuestions: number;
+  };
+  series: {
+    date: string;
+    enrollments: number;
+    signups: number;
+    activeUsers: number;
+    revenue: number;
+  }[];
+  topCourses: {
+    id: string;
+    title: string;
+    instructorName: string;
+    price: number;
+    enrollments: number;
+    completions: number;
+    completionRate: number;
+    revenue: number;
+  }[];
+};
+
+export type AdminUser = {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+  isActive: boolean;
+  createdAt: string;
+};
+
+export type AdminUsersPage = {
+  users: AdminUser[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+};
+
 export type CourseDetail = {
   id: string;
   title: string;

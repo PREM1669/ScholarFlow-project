@@ -15,7 +15,7 @@ export const ROLE_HOME: Record<Role, string> = {
 export const NAV_LINKS: Record<Role, { href: string; label: string }[]> = {
   ADMIN: [
     { href: "/admin/dashboard", label: "Dashboard" },
-    { href: "/instructor/courses", label: "Courses" },
+    { href: "/admin/users", label: "Users" },
   ],
   INSTRUCTOR: [
     { href: "/instructor/dashboard", label: "Dashboard" },

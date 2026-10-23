@@ -8,3 +8,10 @@ export function cn(...inputs: ClassValue[]) {
 export function formatPrice(price: number) {
   return price === 0 ? "Free" : `$${price.toFixed(2)}`;
 }
+
+export function formatMoney(amount: number) {
+  return `$${amount.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+}
