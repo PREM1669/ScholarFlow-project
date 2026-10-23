@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Check, ListChecks } from "lucide-react";
+import { Check, ListChecks, Sparkles } from "lucide-react";
 import { CompletionBadge } from "@/components/student/completion-badge";
 import { CourseProgress } from "@/components/student/course-progress";
 import { cn } from "@/lib/utils";
@@ -17,6 +17,13 @@ export function LearnSidebar({ course, activeId }: { course: LearnCourse; active
           total={course.progress.totalSections}
         />
       </div>
+      <Link
+        href={`/student/courses/${course.id}/assistant?section=${activeId}`}
+        className="flex items-center gap-2 rounded-md border bg-white p-3 text-sm hover:bg-muted"
+      >
+        <Sparkles className="h-4 w-4" aria-hidden="true" />
+        Ask the AI assistant
+      </Link>
       <nav aria-label="Course sections">
         <ol className="space-y-1">
           {course.sections.map((section) => (

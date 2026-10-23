@@ -6,9 +6,16 @@ import { ArrowLeft } from "lucide-react";
 import { CourseForm } from "@/components/courses/course-form";
 import { SectionBuilder } from "@/components/courses/section-builder";
 import { AssignmentManager } from "@/components/instructor/assignment-manager";
+import { CourseChat } from "@/components/chat/course-chat";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { useCourse, useUpdateCourse } from "@/hooks/use-courses";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 
 export default function EditCoursePage() {
   const params = useParams<{ id: string }>();
@@ -59,15 +66,38 @@ export default function EditCoursePage() {
         }
       />
       <div className="mx-auto max-w-3xl space-y-6">
-        <CourseForm
-          course={course.data}
-          busy={updateCourse.isPending}
-          onSubmit={(values, published) =>
-            updateCourse.mutateAsync({ ...values, published })
-          }
-        />
-        <SectionBuilder courseId={courseId} />
-        <AssignmentManager courseId={courseId} />
+        <Tabs defaultValue="setup">
+          <TabsList>
+            <TabsTrigger value="setup">Course setup</TabsTrigger>
+            <TabsTrigger value="assistant">AI assistant</TabsTrigger>
+          </TabsList>
+          <TabsContent value="setup" className="space-y-6 pt-4">
+            <CourseForm
+              course={course.data}
+              busy={updateCourse.isPending}
+              onSubmit={(values, published) =>
+                updateCourse.mutateAsync({ ...values, published })
+              }
+            />
+            <SectionBuilder courseId={courseId} />
+            <AssignmentManager courseId={courseId} />
+          </TabsContent>
+          <TabsContent value="assistant" className="pt-4">
+            <p className="mb-3 max-w-2xl text-sm leading-6 text-slate-500">
+              Preview what enrolled students can ask. The assistant uses the
+              course description and section notes only, not quizzes or
+              assignments. Add key points or transcripts to video lessons.
+            </p>
+            <CourseChat
+              courseId={courseId}
+              courseTitle={course.data.title}
+              suggestions={[
+                "What is this course about?",
+                "Summarize the first section",
+              ]}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
     </>
   );
