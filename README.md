@@ -65,6 +65,56 @@ All endpoints require an active instructor or admin; instructors can only
 access sections belonging to their own courses. Student-facing quiz APIs must
 not expose `correctIndex`.
 
+## Course AI assistant
+
+The student course assistant is available from a lesson sidebar at
+`/student/courses/:id/assistant`. Instructors can preview it from the AI
+assistant tab in their course editor. It retrieves relevant course descriptions
+and section notes using keyword/BM25 search, streams responses from Gemini or
+OpenAI, and displays the sections used. Quiz questions and assignment prompts
+are never included in model context. Only enrolled students, the course owner,
+and admins can call the chat API.
+
+Configure one server-side provider in `.env` (these variables must not use the
+`NEXT_PUBLIC_` prefix):
+
+```env
+AI_PROVIDER="gemini"
+GEMINI_API_KEY="your-gemini-key"
+GEMINI_MODEL="your-gemini-model-id"
+OPENAI_API_KEY=""
+OPENAI_MODEL=""
+```
+
+For OpenAI, set `AI_PROVIDER="openai"` and configure its key and model instead.
+List models available to the configured key with `npm run ai:models`, choose a
+fast/low-cost generation model, then restart the development server. This
+command uses Node's `--env-file` support (Node 20.6+ or 18.19+). The project
+does not include or require an AI SDK package. Gemini free-tier terms may allow
+prompts to be used to improve Google's products; review the provider's current
+privacy and pricing terms before sending sensitive material.
+
+The assistant refuses questions that do not match course content before
+calling the provider, and the system prompt further restricts answers to
+retrieved material. Keyword retrieval can miss paraphrases, client-held chat
+history can be forged, and prompt-injection filtering is not perfect. These
+checks reduce unsupported responses but cannot guarantee them. Use course notes
+for authoritative answers; videos, quiz content, and graded assignment prompts
+are not available to the assistant. The API allows 20 provider-backed questions
+per user per 10 minutes, counted in `AuditLog` rows with action `AI_QUESTION`;
+small talk and locally refused questions do not count.
+
+The local seed writes longer sample notes into the existing
+`Foundations of Web Development` sections so retrieval can be tried without
+creating a new course. Running the seed again overwrites those three sample
+sections' notes.
+
+### AI API
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `POST` | `/api/v1/ai/chat` | Stream a course-grounded text answer; send `{ "courseId": "...", "messages": [{ "role": "user", "content": "..." }] }`. The `X-Sources` response header lists sections used. |
+
 ## Student portal
 
 Students can browse published courses at `/student/courses`, filter the catalog
