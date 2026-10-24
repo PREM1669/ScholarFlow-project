@@ -7,7 +7,7 @@ import type { LearnCourse } from "@/types";
 
 export function LearnSidebar({ course, activeId }: { course: LearnCourse; activeId: string }) {
   return (
-    <aside className="space-y-4 lg:sticky lg:top-4 lg:self-start">
+    <aside className="min-w-0 space-y-4 lg:sticky lg:top-4 lg:self-start">
       <div className="space-y-3 rounded-lg border p-4">
         <Link href={`/student/courses/${course.id}`} className="block font-semibold hover:underline">{course.title}</Link>
         <CompletionBadge percent={course.progress.percent} isCompleted={course.progress.isCompleted} />
@@ -41,7 +41,7 @@ export function LearnSidebar({ course, activeId }: { course: LearnCourse; active
                   {section.completed && <Check className="h-3 w-3" />}
                   <span className="sr-only">{section.completed ? "Completed" : "Not completed"}</span>
                 </span>
-                <span className="flex-1">{section.order}. {section.title}</span>
+                <span className="min-w-0 flex-1 break-words">{section.order}. {section.title}</span>
                 {section.quiz && <ListChecks className="h-4 w-4 text-muted-foreground" aria-label="Has quiz" />}
               </Link>
             </li>

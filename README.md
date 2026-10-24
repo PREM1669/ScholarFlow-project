@@ -10,6 +10,40 @@ Next.js 14 (App Router), TypeScript, Tailwind CSS, shadcn/ui, Prisma, PostgreSQL
 3. `npx prisma migrate dev`
 4. `npm run dev`
 
+## Testing
+
+Run the unit tests, coverage report, TypeScript check, and linter with:
+
+```bash
+npm test
+npm run test:coverage
+npm run typecheck
+npm run lint
+```
+
+Jest tests use mocked Prisma and provider requests; they do not connect to a
+database or call Gemini/OpenAI. The coverage report is written to
+`coverage/lcov-report/index.html`.
+
+Playwright E2E tests use a production build and a dedicated disposable
+PostgreSQL database. Copy `.env.test.example` to `.env.test`, then set
+`DATABASE_URL`, `DIRECT_URL`, `NEXTAUTH_URL`, and a test-only
+`NEXTAUTH_SECRET` for a separate Supabase project. Never point `.env.test` at
+the development or production database. The E2E runner checks the configured
+URLs against `.env` and `.env.local` and exits before migrations or cleanup if
+they identify the same database. It applies pending migrations, creates only
+`sf-e2e-*@e2e.scholarflow.dev` fixtures, and removes those fixtures after the
+run.
+
+```bash
+npm run test:e2e
+npm run test:e2e:ui
+```
+
+The Playwright HTML report is written to `playwright-report/index.html`.
+Screenshots and traces for failures are saved under `test-results/`. Both
+directories are ignored by Git.
+
 ## Authentication
 
 Register students and instructors at `/register`, or sign in at `/login`.

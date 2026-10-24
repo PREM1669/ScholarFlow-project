@@ -8,18 +8,19 @@ import { Button } from "@/components/ui/button";
 import { useSetProgress } from "@/hooks/use-learn";
 import type { LearnSection } from "@/types";
 
-export function SectionViewer({ courseId, section, prevId, nextId }: {
+export function SectionViewer({ courseId, section, prevId, nextId, className }: {
   courseId: string;
   section: LearnSection;
   prevId: string | null;
   nextId: string | null;
+  className?: string;
 }) {
   const setProgress = useSetProgress(courseId, section.id);
   const quizPending = section.quiz !== null && section.attempt === null;
   const hasContent = section.content.trim() !== "";
   const base = `/student/courses/${courseId}/learn`;
   return (
-    <article className="min-w-0 space-y-6">
+    <article className={`min-w-0 space-y-6 ${className ?? ""}`}>
       <div>
         <p className="text-sm text-muted-foreground">Section {section.order}</p>
         <h1 className="text-2xl font-bold">{section.title}</h1>

@@ -15,3 +15,7 @@ export function formatMoney(amount: number) {
     maximumFractionDigits: 2,
   })}`;
 }
+
+export function isActivePath(pathname: string, href: string) {
+  return pathname === href || pathname.startsWith(`${href}/`);
+}

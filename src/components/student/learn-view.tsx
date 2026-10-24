@@ -44,13 +44,16 @@ export function LearnView({ courseId }: { courseId: string }) {
         </div>
       )}
       <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
-        <LearnSidebar course={course} activeId={active.id} />
+        <div className="order-2 min-w-0 lg:order-1">
+          <LearnSidebar course={course} activeId={active.id} />
+        </div>
         <SectionViewer
           key={active.id}
           courseId={courseId}
           section={active}
           prevId={course.sections[activeIndex - 1]?.id ?? null}
           nextId={course.sections[activeIndex + 1]?.id ?? null}
+          className="order-1 lg:order-2"
         />
       </div>
     </div>

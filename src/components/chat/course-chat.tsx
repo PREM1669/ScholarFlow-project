@@ -50,7 +50,7 @@ export function CourseChat({ courseId, courseTitle, suggestions }: Props) {
   }
 
   return (
-    <div className="flex h-[70vh] min-h-[420px] max-w-3xl flex-col rounded-xl border bg-white">
+    <div className="flex h-[70vh] min-h-[420px] w-full min-w-0 max-w-3xl flex-col rounded-xl border bg-white">
       <div
         ref={scrollRef}
         onScroll={handleScroll}
@@ -102,7 +102,7 @@ export function CourseChat({ courseId, courseTitle, suggestions }: Props) {
         <Textarea
           rows={2}
           maxLength={2000}
-          className="min-h-0 resize-none"
+          className="min-h-0 resize-none text-base sm:text-sm"
           placeholder="Ask a question about this course..."
           aria-label="Your question"
           value={input}

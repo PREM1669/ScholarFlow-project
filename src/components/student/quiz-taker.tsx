@@ -58,7 +58,7 @@ export function QuizTaker({ courseId, sectionId, questions, attempt }: {
 
   return (
     <section className="space-y-4 rounded-lg border p-4">
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-lg font-semibold">Section quiz</h2>
         {result && !editing && <Badge variant={result.percent === 100 ? "default" : "secondary"}>{result.score}/{result.total} · {result.percent}%</Badge>}
       </div>
@@ -93,7 +93,7 @@ export function QuizTaker({ courseId, sectionId, questions, attempt }: {
                         }
                         className="h-4 w-4 shrink-0 accent-primary"
                       />
-                      <span className="flex-1 text-sm">{option}</span>
+                      <span className="min-w-0 flex-1 break-words text-sm">{option}</span>
                       {answers[question.id] === optionIndex && (
                         <span className="text-xs font-semibold text-primary">
                           Selected answer
